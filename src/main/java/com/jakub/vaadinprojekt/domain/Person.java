@@ -17,18 +17,9 @@ public class Person implements Serializable{
 	@Size(min=3, max=50)
 	private String nickname;
 	
-//	@NotNull
-//	@Size(min=6, max=50)
-//	private String password;
-//	
-//	@NotNull
-//	private String passwordTest;
-	
 	public Person(String nickname) {
 		super();
 		this.nickname = nickname;
-//		this.password = password;
-//		this.passwordTest = passwordTest;
 	}
 
 	public Person() {
@@ -41,27 +32,6 @@ public class Person implements Serializable{
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
 	}
-//	
-//	public String getPassword() {
-//		return password;
-//	}
-//
-//	public void setPassword(String password) {
-//		this.password = password;
-//	}
-//	
-//	public String getPasswordTest() {
-//		return passwordTest;
-//	}
-//
-//	public void setPasswordTest(String passwordTest) {
-//		this.passwordTest = passwordTest;
-//	}
-//	
-//	@AssertTrue(message="Passwords don't match")
-//	 public boolean isValid() {
-//	    return this.password.equals(this.passwordTest);
-//	 }
 
 	public UUID getId() {
 		return id;

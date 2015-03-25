@@ -1,5 +1,7 @@
 package com.jakub.vaadinprojekt;
 
+import java.awt.TextField;
+
 import javax.servlet.annotation.WebServlet;
 
 import com.jakub.vaadinprojekt.domain.Person;
@@ -12,9 +14,11 @@ import com.vaadin.data.validator.BeanValidator;
 import com.vaadin.server.AbstractErrorMessage.ContentMode;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.AbstractTextField;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
@@ -30,67 +34,56 @@ public class MyUI extends UI {
 	Person person = new Person();
 	BeanFieldGroup<Person> item = new BeanFieldGroup<Person>(Person.class);
 
+	//First layout
+    final VerticalLayout loginLayout = new VerticalLayout();
+    
+	//Second layout
+    final VerticalLayout lobbyLayout = new VerticalLayout();
+    
 	@Override
     protected void init(VaadinRequest vaadinRequest) {
 
-		//First layout
-        final VerticalLayout testLayout = new VerticalLayout();
-        Button testBtn = new Button("hehe");
-        
-        //Second layout
-        final VerticalLayout layout = new VerticalLayout();
-        layout.setMargin(true);
+		loginLayout.setMargin(true);
+        lobbyLayout.setMargin(true);
         
         item.setItemDataSource(person);
-        testLayout.addComponent(prepareForm());
+        loginLayout.addComponent(prepareForm());        
         
         //First button
+        Button testBtn = new Button("Wyloguj");
         testBtn.addClickListener(new Button.ClickListener() {
 			private static final long serialVersionUID = 1L;
 
 			@Override
             public void buttonClick(ClickEvent event) {
-                setContent(layout);
+                setContent(loginLayout);
             }
         });
-        testLayout.addComponent(testBtn);
-        
-        //Second button
-        Button button = new Button("Click Me");
-        button.addClickListener(new Button.ClickListener() {
-			private static final long serialVersionUID = 1L;
+        lobbyLayout.addComponent(testBtn);
 
-			@Override
-            public void buttonClick(ClickEvent event) {
-                layout.addComponent(new Label("Thank you for clicking"));
-                setContent(testLayout);
-            }
-        });
-        layout.addComponent(button);
-
-        //Setting content
-        setContent(testLayout);
+        //Setting content - login screen if not logged, else - lobby screen
+        if(VaadinSession.getCurrent().getSession().getAttribute("user") == null)
+        	setContent(loginLayout);
+        else{
+        	lobbyLayout.addComponent(new Label("user: "+ VaadinSession.getCurrent().getSession().getAttribute("user") ));
+        	setContent(lobbyLayout);
+        }
     }
 	
-	public Button makeSendButton(){
-		Button button = new Button("Send");
+	//creating login button
+	public Button loginButton(){
+		Button button = new Button("Zaloguj");
 		button.addClickListener(new Button.ClickListener() {
 			private static final long serialVersionUID = 1L;
 			@Override
 			public void buttonClick(ClickEvent event) {
 				try {
 					item.commit();
-
-					//TEMPORARY POP-UP WITH USERNAME
-					final Window window = new Window("Data");
-					window.setWidth(300, Unit.PIXELS);
-
-					final VerticalLayout windowLayout = new VerticalLayout();
-					windowLayout.setMargin(true);
-					windowLayout.addComponent(new Label("Name: " + person.getNickname()));
-					window.setContent(windowLayout);
-
-					UI.getCurrent().addWindow(window);
+					
+					//set username in session
+					VaadinSession.getCurrent().getSession().setAttribute("user", person.getNickname());
+					lobbyLayout.addComponent(new Label("user: "+ VaadinSession.getCurrent().getSession().getAttribute("user") ));
+					setContent(lobbyLayout);
 					
 				} catch (CommitException e) {
 					e.printStackTrace();
@@ -107,15 +100,7 @@ public class MyUI extends UI {
 		name.setNullRepresentation("");
 		form.addComponent(name);
 		
-//		AbstractTextField pass = (AbstractTextField) item.buildAndBind("Password", "password");
-//		pass.setNullRepresentation("");
-//		form.addComponent(pass);
-//		
-//		AbstractTextField passTest = (AbstractTextField) item.buildAndBind("Confirm password", "passwordTest");
-//		passTest.setNullRepresentation("");
-//		form.addComponent(passTest);
-		
-		form.addComponent(makeSendButton());
+		form.addComponent(loginButton());
 		return form;
 		}
 
@@ -125,4 +110,5 @@ public class MyUI extends UI {
 
 		private static final long serialVersionUID = 1L;
     }
+    
 }
