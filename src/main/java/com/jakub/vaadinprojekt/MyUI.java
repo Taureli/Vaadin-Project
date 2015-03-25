@@ -34,6 +34,7 @@ public class MyUI extends UI {
     
 	@Override
     protected void init(VaadinRequest vaadinRequest) {
+		getPage().setTitle("Tic Tac Toe Online!");
 
 		loginLayout.setMargin(true);
         lobbyLayout.setMargin(true);
@@ -95,7 +96,7 @@ public class MyUI extends UI {
 		
 		form.addComponent(loginButton());
 		return form;
-		}
+	}
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
