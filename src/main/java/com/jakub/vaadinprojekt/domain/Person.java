@@ -3,7 +3,6 @@ package com.jakub.vaadinprojekt.domain;
 import java.io.Serializable;
 import java.util.UUID;
 
-import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 

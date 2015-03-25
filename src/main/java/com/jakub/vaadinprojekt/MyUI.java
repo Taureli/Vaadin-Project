@@ -1,7 +1,5 @@
 package com.jakub.vaadinprojekt;
 
-import java.awt.TextField;
-
 import javax.servlet.annotation.WebServlet;
 
 import com.jakub.vaadinprojekt.domain.Person;
@@ -10,20 +8,16 @@ import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.data.validator.BeanValidator;
-import com.vaadin.server.AbstractErrorMessage.ContentMode;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.AbstractTextField;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 
 @Theme("mytheme")
 @Widgetset("com.jakub.vaadinprojekt.MyAppWidgetset")
@@ -34,10 +28,8 @@ public class MyUI extends UI {
 	Person person = new Person();
 	BeanFieldGroup<Person> item = new BeanFieldGroup<Person>(Person.class);
 
-	//First layout
+	//Layouts
     final VerticalLayout loginLayout = new VerticalLayout();
-    
-	//Second layout
     final VerticalLayout lobbyLayout = new VerticalLayout();
     
 	@Override
@@ -47,7 +39,7 @@ public class MyUI extends UI {
         lobbyLayout.setMargin(true);
         
         item.setItemDataSource(person);
-        loginLayout.addComponent(prepareForm());        
+        loginLayout.addComponent(loginForm());        
         
         //First button
         Button testBtn = new Button("Wyloguj");
@@ -93,7 +85,8 @@ public class MyUI extends UI {
 		return button;
 	}
 	
-	public FormLayout prepareForm(){
+	//login form
+	public FormLayout loginForm(){
 		FormLayout form = new FormLayout();
 		
 		AbstractTextField name = (AbstractTextField) item.buildAndBind("Nickname", "nickname");
