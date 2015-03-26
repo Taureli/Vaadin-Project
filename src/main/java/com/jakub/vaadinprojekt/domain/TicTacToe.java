@@ -6,7 +6,7 @@ public class TicTacToe {
 
 	String playerX;
 	String playerO;
-	String[][] board = new String[3][3];
+	public String[][] board = new String[3][3];
 	boolean winX = false;
 	boolean winO = false;
 	String playerTurn = "x";
@@ -31,7 +31,7 @@ public class TicTacToe {
 			x = 2;
 		}
 		if(board[y][x] == "n"){
-			GameBroadcaster.broadcast(btn, playerTurn);
+			GameBroadcaster.broadcastMove(btn, playerTurn);
 			board[y][x] = playerTurn;
 			nextTurn();
 		}

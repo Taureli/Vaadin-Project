@@ -9,24 +9,40 @@ public class GameBroadcaster {
 	static ExecutorService executorService = Executors.newSingleThreadExecutor();
 
 	public interface BroadcastListener {
-		void receiveBroadcast(int btn, String player);
+		void receiveBroadcastMove(int btn, String player);
+		void receiveBroadcastStart();
 	}
 
 	private static LinkedList<BroadcastListener> listeners = new LinkedList<BroadcastListener>();
 
 	public static synchronized void register(BroadcastListener listener) {
 		listeners.add(listener);
+		//If there are 2 players, enable board
+		if(listeners.size() >= 2){
+			broadcastStart();
+		}
 	}
 
 	public static synchronized void unregister(BroadcastListener listener) {
 		listeners.remove(listener);
 	}
 
-	public static synchronized void broadcast(final int btn,final String player) {
+	//Movement on board
+	public static synchronized void broadcastMove(final int btn,final String player) {
 		for (final BroadcastListener listener : listeners) executorService.execute(new Runnable() {
 			@Override
 			public void run() {
-				listener.receiveBroadcast(btn, player);
+				listener.receiveBroadcastMove(btn, player);
+			}
+		});
+	}
+	
+	//Game start
+	public static synchronized void broadcastStart(){
+		for(final BroadcastListener listener:listeners) executorService.execute(new Runnable(){
+			@Override
+			public void run(){
+				listener.receiveBroadcastStart();
 			}
 		});
 	}

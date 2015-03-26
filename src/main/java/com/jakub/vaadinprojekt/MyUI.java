@@ -46,6 +46,9 @@ public class MyUI extends UI implements BroadcastListener {
     final VerticalLayout lobbyLayout = new VerticalLayout();
     GridLayout gameLayout = new GridLayout(3, 3);
     
+    //One game for everybody
+    final TicTacToe game = new TicTacToe();
+    
 	@Override
     protected void init(VaadinRequest vaadinRequest) {
 		getPage().setTitle("Tic Tac Toe Online!");
@@ -136,7 +139,6 @@ public class MyUI extends UI implements BroadcastListener {
 	//----------GAME-LAYOUT----------
 	void prepareGameLayout(){
         gameLayout.setMargin(true);
-        final TicTacToe game = new TicTacToe();
         
         //create board
         //int j = 1;
@@ -144,6 +146,7 @@ public class MyUI extends UI implements BroadcastListener {
 			final int j = i + 1;
 			buttons.add(new Button(""));
 			//buttons.get(i).setId("" + j);
+			buttons.get(i).setEnabled(false); 	//Board buttons are disabled until there are 2 players
 			buttons.get(i).addClickListener(new Button.ClickListener() {
 				private static final long serialVersionUID = 1L;
 				@Override
@@ -163,8 +166,22 @@ public class MyUI extends UI implements BroadcastListener {
         super.detach();
     }
 
+    //Game starts
 	@Override
-	public void receiveBroadcast(final int btn, final String playerTurn) {
+	public void receiveBroadcastStart() {
+		access(new Runnable() {
+            @Override
+            public void run() {
+            	for(Button btn : buttons){
+            		btn.setEnabled(true);
+            	}
+            }
+        });
+	}
+
+    //Player moves
+	@Override
+	public void receiveBroadcastMove(final int btn, final String playerTurn) {
         access(new Runnable() {
             @Override
             public void run() {
