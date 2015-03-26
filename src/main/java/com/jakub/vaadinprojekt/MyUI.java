@@ -87,7 +87,7 @@ public class MyUI extends UI implements BroadcastListener {
 					
 					//set username in session
 					VaadinSession.getCurrent().getSession().setAttribute("user", person.getNickname());
-					lobbyLayout.addComponent(new Label("user: "+ VaadinSession.getCurrent().getSession().getAttribute("user") ));
+					lobbyLayout.addComponent(new Label("Nazwa użytkownika: "+ VaadinSession.getCurrent().getSession().getAttribute("user") ));
 					setContent(lobbyLayout);
 					
 				} catch (CommitException e) {
@@ -123,7 +123,7 @@ public class MyUI extends UI implements BroadcastListener {
 
 			@Override
             public void buttonClick(ClickEvent event) {
-				//TODO: ACTUAL LOGOUT FROM SESSION
+				VaadinSession.getCurrent().close();
                 setContent(loginLayout);
             }
         });
