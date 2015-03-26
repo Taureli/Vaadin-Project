@@ -6,6 +6,7 @@ import java.util.List;
 import javax.servlet.annotation.WebServlet;
 
 import com.jakub.vaadinprojekt.domain.Person;
+import com.jakub.vaadinprojekt.domain.TicTacToe;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
@@ -18,6 +19,7 @@ import com.vaadin.ui.AbstractTextField;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -37,7 +39,8 @@ public class MyUI extends UI {
 	//Layouts
     final VerticalLayout loginLayout = new VerticalLayout();
     final VerticalLayout lobbyLayout = new VerticalLayout();
-    final VerticalLayout gameLayout = new VerticalLayout();
+    //final VerticalLayout gameLayout = new VerticalLayout();
+    GridLayout gameLayout = new GridLayout(3, 3);
     
 	@Override
     protected void init(VaadinRequest vaadinRequest) {
@@ -126,15 +129,19 @@ public class MyUI extends UI {
 	//----------GAME-LAYOUT----------
 	void prepareGameLayout(){
         gameLayout.setMargin(true);
+        final TicTacToe game = new TicTacToe();
         
         //create board
+        //int j = 1;
 		for(int i = 0; i < 9; i++){
+			final int j = i + 1;
 			buttons.add(new Button(""));
+			buttons.get(i).setId("" + j);
 			buttons.get(i).addClickListener(new Button.ClickListener() {
 				private static final long serialVersionUID = 1L;
 				@Override
 				public void buttonClick(ClickEvent event) {
-					//AKCJA
+					game.makeMove(j, buttons.get(j-1));
 				}
 			});
 			gameLayout.addComponent(buttons.get(i));

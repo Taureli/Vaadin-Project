@@ -1,34 +1,40 @@
 package com.jakub.vaadinprojekt.domain;
 
+import com.vaadin.ui.Button;
+
 public class TicTacToe {
 
 	String playerX;
 	String playerO;
-	char[][] board = new char[3][3];
+	String[][] board = new String[3][3];
 	boolean winX = false;
 	boolean winO = false;
-	char playerTurn = 'x';
+	String playerTurn = "x";
 	
-	public TicTacToe(String player1, String player2){
-		this.playerX = player1;
-		this.playerO = player2;
+	public TicTacToe(){
+//		this.playerX = player1;
+//		this.playerO = player2;
 		
 		//Filling board with "null"
 		for(int i = 0; i < 3; i++){
 			for(int j = 0; j < 3; j++){
-				board[i][j] = 'n';
+				board[i][j] = "n";
 			}
 		}
 	}
 	
-	void makeMove(int y, int x){
-		if(board[y][x] != 'n'){
+	public void makeMove(int z, Button btn){
+		int y = z/3;
+		int x = z%3;
+		if(board[y][x] == "n"){
+			btn.setCaption(playerTurn);
 			board[y][x] = playerTurn;
 			nextTurn();
 		}
+		
 	}
 	
-	boolean checkWin(){
+	public boolean checkWin(){
 		//calls checkers for all win conditions
 		if((checkRowsWin() || checkColumnsWin() || checkDiagonalsWin())){
 			return true;
@@ -38,7 +44,7 @@ public class TicTacToe {
 	}
 
 	//-----------Win conditions checkers------------//
-    private boolean checkRowsWin() {
+	public boolean checkRowsWin() {
         for (int i = 0; i < 3; i++) {
             if (checkRowCol(board[i][0], board[i][1], board[i][2]) == true) {
                 return true;
@@ -61,16 +67,16 @@ public class TicTacToe {
     }
 
     // Checks if all symbols are the same
-    private boolean checkRowCol(char c1, char c2, char c3) {
-        return ((c1 != 'n') && (c1 == c2) && (c2 == c3));
+    private boolean checkRowCol(String c1, String c2, String c3) {
+        return ((c1 != "n") && (c1 == c2) && (c2 == c3));
     }
     //---------------------------------------------//
 	
-	boolean checkFullBoard(){
+    public boolean checkFullBoard(){
 		int emptyCounter = 0;
 		for(int i = 0; i < 3; i++){
 			for(int j = 0; j < 3; j++){
-				if(board[i][j] == 'n'){
+				if(board[i][j] == "n"){
 					emptyCounter++;
 				}
 			}
@@ -82,11 +88,11 @@ public class TicTacToe {
 		return false;
 	}
 	
-	void nextTurn(){
-		if(playerTurn == 'x')
-			playerTurn = 'o';
+    public void nextTurn(){
+		if(playerTurn == "x")
+			playerTurn = "o";
 		else
-			playerTurn = 'x';
+			playerTurn = "x";
 	}
 	
 }
