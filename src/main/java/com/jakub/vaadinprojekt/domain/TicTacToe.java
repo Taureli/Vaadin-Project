@@ -25,7 +25,11 @@ public class TicTacToe {
 	
 	public void makeMove(int z, Button btn){
 		int y = z/3;
-		int x = z%3;
+		int x = z%3 - 1;
+		if(z == 9 || z == 6 || z == 3){
+			y--;
+			x = 2;
+		}
 		if(board[y][x] == "n"){
 			btn.setCaption(playerTurn);
 			board[y][x] = playerTurn;
