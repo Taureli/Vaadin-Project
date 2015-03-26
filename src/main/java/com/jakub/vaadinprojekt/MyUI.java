@@ -14,6 +14,7 @@ import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.server.VaadinSession;
@@ -23,6 +24,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
@@ -141,12 +143,12 @@ public class MyUI extends UI implements BroadcastListener {
 		for(int i = 0; i < 9; i++){
 			final int j = i + 1;
 			buttons.add(new Button(""));
-			buttons.get(i).setId("" + j);
+			//buttons.get(i).setId("" + j);
 			buttons.get(i).addClickListener(new Button.ClickListener() {
 				private static final long serialVersionUID = 1L;
 				@Override
 				public void buttonClick(ClickEvent event) {
-					game.makeMove(j, buttons.get(j-1));
+					game.makeMove(j, j-1);
 				}
 			});
 			gameLayout.addComponent(buttons.get(i));
@@ -162,11 +164,12 @@ public class MyUI extends UI implements BroadcastListener {
     }
 
 	@Override
-	public void receiveBroadcast(final Button btn, final String playerTurn) {
+	public void receiveBroadcast(final int btn, final String playerTurn) {
         access(new Runnable() {
             @Override
             public void run() {
-            	btn.setCaption(playerTurn);
+            	buttons.get(btn).setCaption(playerTurn);
+            	//new Notification(btn.getId()).show(Page.getCurrent());
             }
         });
 	}
