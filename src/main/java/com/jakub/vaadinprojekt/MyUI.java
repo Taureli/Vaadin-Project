@@ -5,8 +5,10 @@ import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
 
+import com.jakub.vaadinprojekt.GameBroadcaster.BroadcastListener;
 import com.jakub.vaadinprojekt.domain.Person;
 import com.jakub.vaadinprojekt.domain.TicTacToe;
+import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
@@ -24,9 +26,10 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
+@Push
 @Theme("mytheme")
 @Widgetset("com.jakub.vaadinprojekt.MyAppWidgetset")
-public class MyUI extends UI {
+public class MyUI extends UI implements BroadcastListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -39,18 +42,20 @@ public class MyUI extends UI {
 	//Layouts
     final VerticalLayout loginLayout = new VerticalLayout();
     final VerticalLayout lobbyLayout = new VerticalLayout();
-    //final VerticalLayout gameLayout = new VerticalLayout();
     GridLayout gameLayout = new GridLayout(3, 3);
     
 	@Override
     protected void init(VaadinRequest vaadinRequest) {
 		getPage().setTitle("Tic Tac Toe Online!");
+		
+    	GameBroadcaster.register(this);
         item.setItemDataSource(person);
         
+        //Preparing layouts
 		loginLayout.setMargin(true);
+        loginLayout.addComponent(loginForm());  
         prepareLobbyLayout();
-        prepareGameLayout();
-        loginLayout.addComponent(loginForm());        
+        prepareGameLayout();      
 
         //Setting content - login screen if not logged, else - lobby screen
         if(VaadinSession.getCurrent().getSession().getAttribute("user") == null)
@@ -148,6 +153,24 @@ public class MyUI extends UI {
 		}
 	}
 	//--------------------------------
+
+	//---------------BROADCASTS----------
+    @Override
+    public void detach() {
+        GameBroadcaster.unregister(this);
+        super.detach();
+    }
+
+	@Override
+	public void receiveBroadcast(final Button btn, final String playerTurn) {
+        access(new Runnable() {
+            @Override
+            public void run() {
+            	btn.setCaption(playerTurn);
+            }
+        });
+	}
+	//-------------------------------------
 	
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = MyUI.class, productionMode = false)

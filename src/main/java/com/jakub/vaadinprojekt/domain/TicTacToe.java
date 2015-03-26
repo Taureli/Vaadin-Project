@@ -1,5 +1,6 @@
 package com.jakub.vaadinprojekt.domain;
 
+import com.jakub.vaadinprojekt.GameBroadcaster;
 import com.vaadin.ui.Button;
 
 public class TicTacToe {
@@ -31,7 +32,8 @@ public class TicTacToe {
 			x = 2;
 		}
 		if(board[y][x] == "n"){
-			btn.setCaption(playerTurn);
+			//btn.setCaption(playerTurn);
+			GameBroadcaster.broadcast(btn, playerTurn);
 			board[y][x] = playerTurn;
 			nextTurn();
 		}
