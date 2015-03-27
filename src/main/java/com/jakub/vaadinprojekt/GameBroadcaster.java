@@ -12,6 +12,8 @@ public class GameBroadcaster {
 
 	public interface BroadcastListener {
 		void receiveBroadcastMove(int btn, String player);
+		void receiveBroadcastRequestStatus();
+		void receiveBroadcastGameUpdate(String[][] board, String playerTurn);
 	}
 
 	private static LinkedList<BroadcastListener> listeners = new LinkedList<BroadcastListener>();
@@ -27,6 +29,7 @@ public class GameBroadcaster {
 	//Rooms
 	private static Map<Integer, LinkedList<BroadcastListener>> rooms = new HashMap<Integer, LinkedList<BroadcastListener>>();
 	
+	//Joining room
 	public static synchronized void broadcastAddToRoom(Integer roomId, BroadcastListener listener){
 		//First connection to room - create list
 		if(rooms.get(roomId) == null){
@@ -36,21 +39,40 @@ public class GameBroadcaster {
 		} else {
 			//add user to room
 			rooms.get(roomId).add(listener);
+			
+			//Check if anyone else is in the room, if so - take current game status and lock room
+			if(rooms.get(roomId).size() != 0){
+				broadcastRequestStatus(roomId);
+			}
 		}
     }
 	
 	//Movement on board
-	public static synchronized void broadcastMove(final int btn,final String player, final int curRoom) {
-//		for (final BroadcastListener listener : listeners) executorService.execute(new Runnable() {
-//			@Override
-//			public void run() {
-//				listener.receiveBroadcastMove(btn, player);
-//			}
-//		});
-		for(final BroadcastListener listener : rooms.get(curRoom)) executorService.execute(new Runnable(){
+	public static synchronized void broadcastMove(final int btn,final String player, final int roomId) {
+		for(final BroadcastListener listener : rooms.get(roomId)) executorService.execute(new Runnable(){
 			@Override
 			public void run() {
 				listener.receiveBroadcastMove(btn, player);
+			}
+		});
+	}
+	
+	//Request current game status from other player
+	public static synchronized void broadcastRequestStatus(final int roomId){
+		executorService.execute(new Runnable(){
+			@Override
+			public void run() {
+				rooms.get(roomId).element().receiveBroadcastRequestStatus();
+			}
+		});
+	}
+	
+	//Send game status to others in room
+	public static synchronized void sendGameStatus(final int roomId, final String[][] board, final String playerTurn){
+		for(final BroadcastListener listener : rooms.get(roomId)) executorService.execute(new Runnable(){
+			@Override
+			public void run() {
+				listener.receiveBroadcastGameUpdate(board, playerTurn);
 			}
 		});
 	}

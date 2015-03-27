@@ -188,6 +188,29 @@ public class MyUI extends UI implements BroadcastListener {
             }
         });
 	}
+	
+	//Receive request for current status and send it
+	@Override
+	public void receiveBroadcastRequestStatus() {
+		access(new Runnable(){
+			@Override
+			public void run(){
+				GameBroadcaster.sendGameStatus(curRoom, game.board, game.playerTurn);
+			}
+		});
+	}
+	
+	//Receive game update
+	@Override
+	public void receiveBroadcastGameUpdate(final String[][] newBoard, final String newPlayerTurn){
+		access(new Runnable() {
+            @Override
+            public void run() {
+            	game.board = newBoard;
+            	game.playerTurn = newPlayerTurn;
+            }
+        });
+	}
 	//-------------------------------------
 	
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)

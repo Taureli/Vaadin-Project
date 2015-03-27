@@ -9,7 +9,7 @@ public class TicTacToe {
 	public String[][] board = new String[3][3];
 	boolean winX = false;
 	boolean winO = false;
-	String playerTurn = "x";
+	public String playerTurn = "x";
 	
 	public TicTacToe(){
 //		this.playerX = player1;
