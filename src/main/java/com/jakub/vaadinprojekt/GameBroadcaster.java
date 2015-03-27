@@ -13,7 +13,7 @@ public class GameBroadcaster {
 	public interface BroadcastListener {
 		void receiveBroadcastMove(int btn, String player);
 		void receiveBroadcastRequestStatus();
-		void receiveBroadcastGameUpdate(String[][] board, String playerTurn);
+		void receiveBroadcastGameUpdate(String[] board, String playerTurn);
 	}
 
 	private static LinkedList<BroadcastListener> listeners = new LinkedList<BroadcastListener>();
@@ -68,7 +68,7 @@ public class GameBroadcaster {
 	}
 	
 	//Send game status to others in room
-	public static synchronized void sendGameStatus(final int roomId, final String[][] board, final String playerTurn){
+	public static synchronized void sendGameStatus(final int roomId, final String[] board, final String playerTurn){
 		for(final BroadcastListener listener : rooms.get(roomId)) executorService.execute(new Runnable(){
 			@Override
 			public void run() {

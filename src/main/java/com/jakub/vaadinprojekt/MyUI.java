@@ -155,17 +155,23 @@ public class MyUI extends UI implements BroadcastListener {
         //create board
         //int j = 1;
 		for(int i = 0; i < 9; i++){
-			final int j = i + 1;
+			final int j = i;
 			buttons.add(new Button(""));
 			//buttons.get(i).setId("" + j);
 			buttons.get(i).addClickListener(new Button.ClickListener() {
 				private static final long serialVersionUID = 1L;
 				@Override
 				public void buttonClick(ClickEvent event) {
-					game.makeMove(j, j-1, curRoom);
+					game.makeMove(j, j, curRoom);
 				}
 			});
 			gameLayout.addComponent(buttons.get(i));
+		}
+	}
+	
+	void updateBoard(String[] newBoard){
+		for(int i = 0; i < 9; i++){
+			
 		}
 	}
 	//--------------------------------
@@ -202,12 +208,13 @@ public class MyUI extends UI implements BroadcastListener {
 	
 	//Receive game update
 	@Override
-	public void receiveBroadcastGameUpdate(final String[][] newBoard, final String newPlayerTurn){
+	public void receiveBroadcastGameUpdate(final String[] newBoard, final String newPlayerTurn){
 		access(new Runnable() {
             @Override
             public void run() {
             	game.board = newBoard;
             	game.playerTurn = newPlayerTurn;
+            	updateBoard(newBoard);
             }
         });
 	}
