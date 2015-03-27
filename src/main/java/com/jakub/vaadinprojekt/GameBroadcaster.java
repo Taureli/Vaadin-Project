@@ -47,6 +47,11 @@ public class GameBroadcaster {
 		}
     }
 	
+	//Leaving room
+	public static synchronized void leaveRoom(BroadcastListener listener, int roomId){
+		rooms.get(roomId).remove(listener);
+	}
+	
 	//Movement on board
 	public static synchronized void broadcastMove(final int btn,final String player, final int roomId) {
 		for(final BroadcastListener listener : rooms.get(roomId)) executorService.execute(new Runnable(){

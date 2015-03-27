@@ -46,7 +46,8 @@ public class MyUI extends UI implements BroadcastListener {
 	//Layouts
     final VerticalLayout loginLayout = new VerticalLayout();
     final VerticalLayout lobbyLayout = new VerticalLayout();
-    GridLayout gameLayout = new GridLayout(3, 3);
+    final VerticalLayout gameLayout = new VerticalLayout();
+    GridLayout boardLayout = new GridLayout(3, 3);
     
     //For broadcasts
     MyUI thisUser;
@@ -150,7 +151,7 @@ public class MyUI extends UI implements BroadcastListener {
 	
 	//----------GAME-LAYOUT----------
 	void prepareGameLayout(){
-        gameLayout.setMargin(true);
+        boardLayout.setMargin(true);
         
         //create board
         //int j = 1;
@@ -165,14 +166,40 @@ public class MyUI extends UI implements BroadcastListener {
 					game.makeMove(j, j, curRoom);
 				}
 			});
-			gameLayout.addComponent(buttons.get(i));
+			boardLayout.addComponent(buttons.get(i));
 		}
+		gameLayout.addComponent(boardLayout);
+		
+		//Leaving room
+		Button leaveBtn = new Button("Wyjdź z pokoju");
+		leaveBtn.addClickListener(new Button.ClickListener() {
+			private static final long serialVersionUID = 1L;
+			@Override
+	        public void buttonClick(ClickEvent event) {
+				GameBroadcaster.leaveRoom(thisUser, curRoom);
+	            setContent(lobbyLayout);
+	            curRoom = -1;
+	            //Clear buttons
+	            clearBoard();
+	        }
+	    });
+		gameLayout.addComponent(leaveBtn);
 	}
 	
 	void updateBoard(String[] newBoard){
 		for(int i = 0; i < 9; i++){
-			
+			if(newBoard[i] != "n"){
+				buttons.get(i).setCaption(newBoard[i]);
+			}
 		}
+	}
+	
+	void clearBoard(){
+		for(int i = 0; i < 9; i++){
+			buttons.get(i).setCaption("");
+			game.board[i] = "n";
+		}
+		game.playerTurn = "x";
 	}
 	//--------------------------------
 
