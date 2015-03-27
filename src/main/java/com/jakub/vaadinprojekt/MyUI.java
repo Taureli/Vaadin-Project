@@ -48,9 +48,11 @@ public class MyUI extends UI implements BroadcastListener {
     final VerticalLayout lobbyLayout = new VerticalLayout();
     GridLayout gameLayout = new GridLayout(3, 3);
     
+    //For broadcasts
     MyUI thisUser;
+    int curRoom;	//Current room user is in
     
-    //One game for everybody
+    //Copy of a game
     final TicTacToe game = new TicTacToe();
     
 	@Override
@@ -123,6 +125,7 @@ public class MyUI extends UI implements BroadcastListener {
 				@Override
 				public void buttonClick(ClickEvent event) {
 					GameBroadcaster.broadcastAddToRoom(j, thisUser);
+					curRoom = j;
 					setContent(gameLayout);
 				}
 			});
@@ -159,7 +162,7 @@ public class MyUI extends UI implements BroadcastListener {
 				private static final long serialVersionUID = 1L;
 				@Override
 				public void buttonClick(ClickEvent event) {
-					game.makeMove(j, j-1);
+					game.makeMove(j, j-1, curRoom);
 				}
 			});
 			gameLayout.addComponent(buttons.get(i));

@@ -23,7 +23,7 @@ public class TicTacToe {
 		}
 	}
 	
-	public void makeMove(int z, int btn){
+	public void makeMove(int z, int btn, int room){
 		int y = z/3;
 		int x = z%3 - 1;
 		if(z == 9 || z == 6 || z == 3){
@@ -31,7 +31,7 @@ public class TicTacToe {
 			x = 2;
 		}
 		if(board[y][x] == "n"){
-			GameBroadcaster.broadcastMove(btn, playerTurn);
+			GameBroadcaster.broadcastMove(btn, playerTurn, room);
 			board[y][x] = playerTurn;
 			nextTurn();
 		}
@@ -40,11 +40,10 @@ public class TicTacToe {
 	
 	public boolean checkWin(){
 		//calls checkers for all win conditions
-		if((checkRowsWin() || checkColumnsWin() || checkDiagonalsWin())){
+		if((checkRowsWin() || checkColumnsWin() || checkDiagonalsWin()))
 			return true;
-		}
-		
-		return false;
+		else
+			return false;
 	}
 
 	//-----------Win conditions checkers------------//
@@ -86,10 +85,10 @@ public class TicTacToe {
 			}
 		}
 		
-		if(emptyCounter == 0){
+		if(emptyCounter == 0)
 			return true;
-		}
-		return false;
+		else 
+			return false;
 	}
 	
     public void nextTurn(){
