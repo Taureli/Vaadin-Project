@@ -154,7 +154,6 @@ public class MyUI extends UI implements BroadcastListener {
         boardLayout.setMargin(true);
         
         //create board
-        //int j = 1;
 		for(int i = 0; i < 9; i++){
 			final int j = i;
 			buttons.add(new Button(""));
@@ -216,7 +215,6 @@ public class MyUI extends UI implements BroadcastListener {
             @Override
             public void run() {
             	buttons.get(btn).setCaption(playerTurn);
-            	//new Notification(btn.getId()).show(Page.getCurrent());
             }
         });
 	}
@@ -253,6 +251,7 @@ public class MyUI extends UI implements BroadcastListener {
 		access(new Runnable() {
             @Override
             public void run() {
+            	clearBoard();
             	new Notification("Koniec gry, wygrywa gracz " + winner + "!").show(Page.getCurrent());
             }
         });

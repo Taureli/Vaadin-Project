@@ -86,7 +86,6 @@ public class GameBroadcaster {
 			@Override
 			public void run() {
 				listener.receiveBroadcastGameUpdate(board, playerTurn);
-				System.out.println("SENT STATUS" + board[0]);
 			}
 		});
 	}
