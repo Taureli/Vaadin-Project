@@ -246,6 +246,28 @@ public class MyUI extends UI implements BroadcastListener {
             }
         });
 	}
+	
+	//Someone won
+	@Override
+	public void receiveBroadcastGameEnded(final String winner) {
+		access(new Runnable() {
+            @Override
+            public void run() {
+            	new Notification("Koniec gry, wygrywa gracz " + winner + "!").show(Page.getCurrent());
+            }
+        });
+	}
+
+	//Game ended with draw
+	@Override
+	public void receiveBroadcastGameEndedDraw() {
+		access(new Runnable() {
+            @Override
+            public void run() {
+            	new Notification("Koniec gry, nikt nie wygrał!").show(Page.getCurrent());
+            }
+        });
+	}
 	//-------------------------------------
 	
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)

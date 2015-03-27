@@ -36,11 +36,28 @@ public class TicTacToe {
 //			x = 2;
 //		}
 		if(board[z] == "n"){
-			GameBroadcaster.broadcastMove(btn, playerTurn, room);
 			board[z] = playerTurn;
-			nextTurn();
+			GameBroadcaster.broadcastMove(btn, playerTurn, room);
+			//Check if someone won or the board is full
+			if(checkWin()){
+				GameBroadcaster.broadcastGameEnd(room, playerTurn);
+				restartGame(room);
+			} else if(checkFullBoard()){
+				GameBroadcaster.broadcastGameEnd(room, "draw");
+				restartGame(room);
+			} else {
+				nextTurn(room);
+			}
 		}
 		
+	}
+	
+	void restartGame(int room){
+		for(int i = 0; i < 9; i++){
+			board[i] = "n";
+		}
+		playerTurn = "x";
+		GameBroadcaster.sendGameStatus(room, board, playerTurn);
 	}
 	
 	public boolean checkWin(){
@@ -105,11 +122,12 @@ public class TicTacToe {
 			return false;
 	}
 	
-    public void nextTurn(){
+    public void nextTurn(int room){
 		if(playerTurn == "x")
 			playerTurn = "o";
 		else
 			playerTurn = "x";
+		GameBroadcaster.sendGameStatus(room, board, playerTurn);
 	}
 	
 }

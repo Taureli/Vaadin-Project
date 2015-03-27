@@ -14,6 +14,8 @@ public class GameBroadcaster {
 		void receiveBroadcastMove(int btn, String player);
 		void receiveBroadcastRequestStatus();
 		void receiveBroadcastGameUpdate(String[] board, String playerTurn);
+		void receiveBroadcastGameEnded(String winner);
+		void receiveBroadcastGameEndedDraw();
 	}
 
 	private static LinkedList<BroadcastListener> listeners = new LinkedList<BroadcastListener>();
@@ -84,6 +86,21 @@ public class GameBroadcaster {
 			@Override
 			public void run() {
 				listener.receiveBroadcastGameUpdate(board, playerTurn);
+				System.out.println("SENT STATUS" + board[0]);
+			}
+		});
+	}
+	
+	//Game ended
+	public static synchronized void broadcastGameEnd(final int roomId, final String winner){
+		for(final BroadcastListener listener : rooms.get(roomId)) executorService.execute(new Runnable(){
+			@Override
+			public void run() {
+				if(winner == "draw")
+					listener.receiveBroadcastGameEndedDraw();
+				else
+					listener.receiveBroadcastGameEnded(winner);
+				System.out.println("GAME ENDS");
 			}
 		});
 	}
