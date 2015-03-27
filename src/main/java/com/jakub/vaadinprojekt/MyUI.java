@@ -179,7 +179,6 @@ public class MyUI extends UI implements BroadcastListener {
 				GameBroadcaster.leaveRoom(thisUser, curRoom);
 	            setContent(lobbyLayout);
 	            curRoom = -1;
-	            //Clear buttons
 	            clearBoard();
 	        }
 	    });
@@ -239,7 +238,9 @@ public class MyUI extends UI implements BroadcastListener {
 		access(new Runnable() {
             @Override
             public void run() {
-            	game.board = newBoard;
+            	for(int i = 0; i < 9; i++){
+            		game.board[i] = newBoard[i];
+            	}
             	game.playerTurn = newPlayerTurn;
             	updateBoard(newBoard);
             }

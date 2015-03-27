@@ -42,7 +42,7 @@ public class GameBroadcaster {
 			
 			//Check if anyone else is in the room, if so - take current game status and lock room
 			if(rooms.get(roomId).size() != 0){
-				broadcastRequestStatus(roomId);
+				broadcastRequestStatus(roomId, listener);
 			}
 		}
     }
@@ -63,11 +63,17 @@ public class GameBroadcaster {
 	}
 	
 	//Request current game status from other player
-	public static synchronized void broadcastRequestStatus(final int roomId){
+	public static synchronized void broadcastRequestStatus(final int roomId, final BroadcastListener listener){
 		executorService.execute(new Runnable(){
 			@Override
 			public void run() {
-				rooms.get(roomId).element().receiveBroadcastRequestStatus();
+				BroadcastListener otherPlayer = listener;
+				for(BroadcastListener user : rooms.get(roomId)){
+					if(user != listener){
+						otherPlayer = user;
+					}
+				}
+				otherPlayer.receiveBroadcastRequestStatus();
 			}
 		});
 	}
