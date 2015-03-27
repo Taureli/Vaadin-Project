@@ -40,11 +40,15 @@ public class MyUI extends UI implements BroadcastListener {
 	
 	//Board buttons
 	private List<Button> buttons = new ArrayList<Button>();
+	//Rooms
+	private List<Button> roomButtons = new ArrayList<Button>();
 
 	//Layouts
     final VerticalLayout loginLayout = new VerticalLayout();
     final VerticalLayout lobbyLayout = new VerticalLayout();
     GridLayout gameLayout = new GridLayout(3, 3);
+    
+    MyUI thisUser;
     
     //One game for everybody
     final TicTacToe game = new TicTacToe();
@@ -52,6 +56,8 @@ public class MyUI extends UI implements BroadcastListener {
 	@Override
     protected void init(VaadinRequest vaadinRequest) {
 		getPage().setTitle("Tic Tac Toe Online!");
+		
+		thisUser = this;
 		
     	GameBroadcaster.register(this);
         item.setItemDataSource(person);
@@ -107,17 +113,21 @@ public class MyUI extends UI implements BroadcastListener {
 	//-----------LOBBY-LAYOUT-------------
 	void prepareLobbyLayout(){
         lobbyLayout.setMargin(true);
-
-        //Logout button
-        Button gameBtn = new Button("Graj");
-        gameBtn.addClickListener(new Button.ClickListener() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-            public void buttonClick(ClickEvent event) {
-                setContent(gameLayout);
-            }
-        });
+        
+        //Buttons for game rooms
+        for(int i = 0; i < 3; i++){
+			final int j = i + 1;
+			roomButtons.add(new Button("Pokój " + j));
+			roomButtons.get(i).addClickListener(new Button.ClickListener() {
+				private static final long serialVersionUID = 1L;
+				@Override
+				public void buttonClick(ClickEvent event) {
+					GameBroadcaster.broadcastAddToRoom(j, thisUser);
+					setContent(gameLayout);
+				}
+			});
+			lobbyLayout.addComponent(roomButtons.get(i));
+		}
         
       //Logout button
         Button logoutBtn = new Button("Wyloguj");
@@ -131,7 +141,6 @@ public class MyUI extends UI implements BroadcastListener {
             }
         });
         
-        lobbyLayout.addComponent(gameBtn);
         lobbyLayout.addComponent(logoutBtn);
 	}
 	//------------------------------------
@@ -146,7 +155,6 @@ public class MyUI extends UI implements BroadcastListener {
 			final int j = i + 1;
 			buttons.add(new Button(""));
 			//buttons.get(i).setId("" + j);
-			buttons.get(i).setEnabled(false); 	//Board buttons are disabled until there are 2 players
 			buttons.get(i).addClickListener(new Button.ClickListener() {
 				private static final long serialVersionUID = 1L;
 				@Override
@@ -165,19 +173,6 @@ public class MyUI extends UI implements BroadcastListener {
         GameBroadcaster.unregister(this);
         super.detach();
     }
-
-    //Game starts
-	@Override
-	public void receiveBroadcastStart() {
-		access(new Runnable() {
-            @Override
-            public void run() {
-            	for(Button btn : buttons){
-            		btn.setEnabled(true);
-            	}
-            }
-        });
-	}
 
     //Player moves
 	@Override
