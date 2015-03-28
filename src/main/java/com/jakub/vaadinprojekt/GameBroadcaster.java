@@ -1,7 +1,9 @@
 package com.jakub.vaadinprojekt;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -16,6 +18,7 @@ public class GameBroadcaster {
 		void receiveBroadcastGameUpdate(String[] board, String playerTurn);
 		void receiveBroadcastGameEnded(String winner);
 		void receiveBroadcastGameEndedDraw();
+		void receiveBroadcastUpdatePlayers(List<String> usersRoom);
 	}
 
 	private static LinkedList<BroadcastListener> listeners = new LinkedList<BroadcastListener>();
@@ -47,11 +50,13 @@ public class GameBroadcaster {
 				broadcastRequestStatus(roomId, listener);
 			}
 		}
+		broadcastUpdatePlayers(roomId);
     }
 	
 	//Leaving room
 	public static synchronized void leaveRoom(BroadcastListener listener, int roomId){
 		rooms.get(roomId).remove(listener);
+		broadcastUpdatePlayers(roomId);
 	}
 	
 	//Movement on board
@@ -85,6 +90,10 @@ public class GameBroadcaster {
 		for(final BroadcastListener listener : rooms.get(roomId)) executorService.execute(new Runnable(){
 			@Override
 			public void run() {
+				List<String> usersRoom = new ArrayList<String>();
+				for(BroadcastListener listener : rooms.get(roomId)){
+					usersRoom.add(((MyUI)listener).nickname);
+				}
 				listener.receiveBroadcastGameUpdate(board, playerTurn);
 			}
 		});
@@ -99,6 +108,20 @@ public class GameBroadcaster {
 					listener.receiveBroadcastGameEndedDraw();
 				else
 					listener.receiveBroadcastGameEnded(winner);
+			}
+		});
+	}
+	
+	//Update player list
+	public static synchronized void broadcastUpdatePlayers(final int roomId){
+		for(final BroadcastListener listener : rooms.get(roomId)) executorService.execute(new Runnable(){
+			@Override
+			public void run() {
+				List<String> usersRoom = new ArrayList<String>();
+				for(BroadcastListener player : rooms.get(roomId)){
+					usersRoom.add(((MyUI)player).nickname);
+				}
+				listener.receiveBroadcastUpdatePlayers(usersRoom);
 			}
 		});
 	}

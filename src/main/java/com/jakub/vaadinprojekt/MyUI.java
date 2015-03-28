@@ -1,6 +1,7 @@
 package com.jakub.vaadinprojekt;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
@@ -23,6 +24,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
@@ -47,12 +49,15 @@ public class MyUI extends UI implements BroadcastListener {
 	//Layouts
     final VerticalLayout loginLayout = new VerticalLayout();
     final VerticalLayout lobbyLayout = new VerticalLayout();
-    final VerticalLayout gameLayout = new VerticalLayout();
+    final VerticalLayout gameVertLayout = new VerticalLayout();
+    final HorizontalLayout gameLayout = new HorizontalLayout();
+    final VerticalLayout playersLayout = new VerticalLayout();
     GridLayout boardLayout = new GridLayout(3, 3);
     
     //For broadcasts
     MyUI thisUser;
     int curRoom;	//Current room user is in
+    public String nickname;
     
     //Copy of a game
     final TicTacToe game = new TicTacToe();
@@ -101,6 +106,7 @@ public class MyUI extends UI implements BroadcastListener {
 					//set username in session
 					VaadinSession.getCurrent().getSession().setAttribute("user", person.getNickname());
 					lobbyLayout.addComponent(new Label("Nazwa użytkownika: "+ VaadinSession.getCurrent().getSession().getAttribute("user") ));
+					nickname = (String) VaadinSession.getCurrent().getSession().getAttribute("user");
 					setContent(lobbyLayout);
 					
 				} catch (CommitException e) {
@@ -153,6 +159,7 @@ public class MyUI extends UI implements BroadcastListener {
 	//----------GAME-LAYOUT----------
 	void prepareGameLayout(){
         boardLayout.setMargin(true);
+        gameVertLayout.setMargin(true);
         
         //create board
 		for(int i = 0; i < 9; i++){
@@ -168,7 +175,6 @@ public class MyUI extends UI implements BroadcastListener {
 			});
 			boardLayout.addComponent(buttons.get(i));
 		}
-		gameLayout.addComponent(boardLayout);
 		
 		//Leaving room
 		Button leaveBtn = new Button("Wyjdź z pokoju");
@@ -182,7 +188,12 @@ public class MyUI extends UI implements BroadcastListener {
 	            clearBoard();
 	        }
 	    });
-		gameLayout.addComponent(leaveBtn);
+		gameVertLayout.addComponent(leaveBtn);
+		gameVertLayout.addComponent(new Label("Użytkownicy w pokoju:"));
+		gameVertLayout.addComponent(playersLayout);
+
+		gameLayout.addComponent(boardLayout);
+		gameLayout.addComponent(gameVertLayout);
 	}
 	
 	void updateBoard(String[] newBoard){
@@ -240,10 +251,25 @@ public class MyUI extends UI implements BroadcastListener {
             	for(int i = 0; i < 9; i++){
             		game.board[i] = newBoard[i];
             	}
+            	
             	game.playerTurn = newPlayerTurn;
             	updateBoard(newBoard);
             }
         });
+	}
+	
+	//Update player list
+	@Override
+	public void receiveBroadcastUpdatePlayers(final List<String> usersRoom) {
+		access(new Runnable() {
+            @Override
+            public void run() {
+            	playersLayout.removeAllComponents();
+            	for(String name : usersRoom){
+            		playersLayout.addComponent(new Label(name));
+            	}
+            }
+		});
 	}
 	
 	//Someone won
@@ -300,5 +326,5 @@ public class MyUI extends UI implements BroadcastListener {
 
 		private static final long serialVersionUID = 1L;
     }
-    
+
 }
