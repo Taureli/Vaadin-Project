@@ -48,7 +48,10 @@ public class MyUI extends UI implements BroadcastListener {
 
 	//Layouts
     final VerticalLayout loginLayout = new VerticalLayout();
-    final VerticalLayout lobbyLayout = new VerticalLayout();
+    final HorizontalLayout lobbyLayout = new HorizontalLayout();
+    final HorizontalLayout lobbyRoomsLayout = new HorizontalLayout();
+    final VerticalLayout lobbySecondaryLayout = new VerticalLayout();
+    final VerticalLayout lobbyNameLayout = new VerticalLayout();
     final VerticalLayout gameVertLayout = new VerticalLayout();
     final HorizontalLayout gameLayout = new HorizontalLayout();
     final VerticalLayout playersLayout = new VerticalLayout();
@@ -81,7 +84,7 @@ public class MyUI extends UI implements BroadcastListener {
         if(VaadinSession.getCurrent().getSession().getAttribute("user") == null)
         	setContent(loginLayout);
         else{
-        	lobbyLayout.addComponent(new Label("user: "+ VaadinSession.getCurrent().getSession().getAttribute("user") ));
+        	lobbyRoomsLayout.addComponent(new Label("user: "+ VaadinSession.getCurrent().getSession().getAttribute("user") ));
         	setContent(lobbyLayout);
         }
     }
@@ -105,7 +108,7 @@ public class MyUI extends UI implements BroadcastListener {
 					
 					//set username in session
 					VaadinSession.getCurrent().getSession().setAttribute("user", person.getNickname());
-					lobbyLayout.addComponent(new Label("Nazwa użytkownika: "+ VaadinSession.getCurrent().getSession().getAttribute("user") ));
+					lobbyNameLayout.addComponent(new Label("Nazwa użytkownika: "+ VaadinSession.getCurrent().getSession().getAttribute("user") ));
 					nickname = (String) VaadinSession.getCurrent().getSession().getAttribute("user");
 					setContent(lobbyLayout);
 					
@@ -122,7 +125,12 @@ public class MyUI extends UI implements BroadcastListener {
 	
 	//-----------LOBBY-LAYOUT-------------
 	void prepareLobbyLayout(){
+        //lobbyRoomsLayout.setMargin(true);
+        //lobbyNameLayout.setMargin(true);
         lobbyLayout.setMargin(true);
+        lobbyLayout.setSpacing(true);
+        lobbySecondaryLayout.setSpacing(true);
+        lobbySecondaryLayout.addComponent(lobbyNameLayout);
         
         //Buttons for game rooms
         for(int i = 0; i < 3; i++){
@@ -137,7 +145,7 @@ public class MyUI extends UI implements BroadcastListener {
 					setContent(gameLayout);
 				}
 			});
-			lobbyLayout.addComponent(roomButtons.get(i));
+			lobbyRoomsLayout.addComponent(roomButtons.get(i));
 		}
         
       //Logout button
@@ -152,6 +160,8 @@ public class MyUI extends UI implements BroadcastListener {
             }
         });
         
+        lobbySecondaryLayout.addComponent(lobbyRoomsLayout);
+        lobbyLayout.addComponent(lobbySecondaryLayout);
         lobbyLayout.addComponent(logoutBtn);
 	}
 	//------------------------------------
