@@ -99,7 +99,6 @@ public class GameBroadcaster {
 					listener.receiveBroadcastGameEndedDraw();
 				else
 					listener.receiveBroadcastGameEnded(winner);
-				System.out.println("GAME ENDS");
 			}
 		});
 	}

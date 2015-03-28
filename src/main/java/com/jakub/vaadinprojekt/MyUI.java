@@ -27,6 +27,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 
 @Push
 @Theme("mytheme")
@@ -252,7 +253,19 @@ public class MyUI extends UI implements BroadcastListener {
             @Override
             public void run() {
             	clearBoard();
-            	new Notification("Koniec gry, wygrywa gracz " + winner + "!").show(Page.getCurrent());
+            	
+            	Window subWindow = new Window("Koniec gry");
+                VerticalLayout subContent = new VerticalLayout();
+                subContent.setMargin(true);
+                subWindow.setContent(subContent);
+                
+                subContent.addComponent(new Label("Wygrywa gracz " + winner + "!"));
+                
+                subWindow.setHeight("100px");
+                subWindow.setWidth("200px");
+                subWindow.center();
+                subWindow.setModal(true);
+                addWindow(subWindow);
             }
         });
 	}
@@ -263,7 +276,19 @@ public class MyUI extends UI implements BroadcastListener {
 		access(new Runnable() {
             @Override
             public void run() {
-            	new Notification("Koniec gry, nikt nie wygrał!").show(Page.getCurrent());
+            	
+            	Window subWindow = new Window("Koniec gry");
+                VerticalLayout subContent = new VerticalLayout();
+                subContent.setMargin(true);
+                subWindow.setContent(subContent);
+                
+                subContent.addComponent(new Label("Nikt nie wygrał!"));
+                
+                subWindow.setHeight("100px");
+                subWindow.setWidth("200px");
+                subWindow.center();
+                subWindow.setModal(true);
+                addWindow(subWindow);
             }
         });
 	}
