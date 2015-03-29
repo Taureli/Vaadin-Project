@@ -54,6 +54,7 @@ public class MyUI extends UI implements BroadcastListener {
     final VerticalLayout lobbyNameLayout = new VerticalLayout();
     final VerticalLayout gameVertLayout = new VerticalLayout();
     final HorizontalLayout gameLayout = new HorizontalLayout();
+    final VerticalLayout boardSymbolLayout = new VerticalLayout();
     final VerticalLayout playersLayout = new VerticalLayout();
     GridLayout boardLayout = new GridLayout(3, 3);
     
@@ -61,6 +62,10 @@ public class MyUI extends UI implements BroadcastListener {
     MyUI thisUser;
     int curRoom;	//Current room user is in
     public String nickname;
+    String mySymbol;
+    
+    //For displaying player's symbol
+	public Label symbolLabel = new Label();
     
     //Copy of a game
     final TicTacToe game = new TicTacToe();
@@ -168,14 +173,13 @@ public class MyUI extends UI implements BroadcastListener {
 	
 	//----------GAME-LAYOUT----------
 	void prepareGameLayout(){
-        boardLayout.setMargin(true);
         gameVertLayout.setMargin(true);
+        boardSymbolLayout.setMargin(true);
         
         //create board
 		for(int i = 0; i < 9; i++){
 			final int j = i;
 			buttons.add(new Button(""));
-			//buttons.get(i).setId("" + j);
 			buttons.get(i).addClickListener(new Button.ClickListener() {
 				private static final long serialVersionUID = 1L;
 				@Override
@@ -196,13 +200,17 @@ public class MyUI extends UI implements BroadcastListener {
 	            setContent(lobbyLayout);
 	            curRoom = -1;
 	            clearBoard();
+	            unlockBoard();
 	        }
 	    });
 		gameVertLayout.addComponent(leaveBtn);
 		gameVertLayout.addComponent(new Label("Użytkownicy w pokoju:"));
 		gameVertLayout.addComponent(playersLayout);
 
-		gameLayout.addComponent(boardLayout);
+		boardSymbolLayout.addComponent(symbolLabel);
+		boardSymbolLayout.addComponent(boardLayout);
+		
+		gameLayout.addComponent(boardSymbolLayout);
 		gameLayout.addComponent(gameVertLayout);
 	}
 	
@@ -210,6 +218,12 @@ public class MyUI extends UI implements BroadcastListener {
 		for(int i = 0; i < 9; i++){
 			if(newBoard[i] != "n"){
 				buttons.get(i).setCaption(newBoard[i]);
+			}
+			//Check if my turn, if not - lock buttons
+			if(game.playerTurn == mySymbol){
+				buttons.get(i).setEnabled(true);
+			} else {
+				buttons.get(i).setEnabled(false);
 			}
 		}
 	}
@@ -220,6 +234,12 @@ public class MyUI extends UI implements BroadcastListener {
 			game.board[i] = "n";
 		}
 		game.playerTurn = "x";
+	}
+	
+	void unlockBoard(){
+		for(int i = 0; i < 9; i++){
+			buttons.get(i).setEnabled(true);
+		}
 	}
 	//--------------------------------
 
@@ -312,6 +332,7 @@ public class MyUI extends UI implements BroadcastListener {
 		access(new Runnable() {
             @Override
             public void run() {
+            	clearBoard();
             	
             	Window subWindow = new Window("Koniec gry");
                 VerticalLayout subContent = new VerticalLayout();

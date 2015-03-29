@@ -41,15 +41,25 @@ public class GameBroadcaster {
 	        LinkedList<BroadcastListener> roomListeners = new LinkedList<BroadcastListener>();
 	        roomListeners.add(listener);
 	        rooms.put(roomId, roomListeners);
+	        ((MyUI)listener).mySymbol = "x";
 		} else {
 			//add user to room
 			rooms.get(roomId).add(listener);
 			
-			//Check if anyone else is in the room, if so - take current game status and lock room
+			//Check if anyone else is in the room, if so - take current game status
 			if(rooms.get(roomId).size() != 0){
 				broadcastRequestStatus(roomId, listener);
+				//Set correct symbol
+				if( ((MyUI)rooms.get(roomId).get(0)).mySymbol == "x" ){
+					((MyUI)listener).mySymbol = "o";
+				} else {
+					((MyUI)listener).mySymbol = "x";
+				}
+			} else {
+				((MyUI)listener).mySymbol = "x";
 			}
 		}
+		((MyUI)listener).symbolLabel.setCaption("Mój symbol - " + ((MyUI)listener).mySymbol);
 		broadcastUpdatePlayers(roomId);
     }
 	
